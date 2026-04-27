@@ -7,7 +7,7 @@ namespace PlanningsAppStage.Controllers
 {
     public class HomeController : Controller
     {
-        // ===============================test
+        // ===============================
         // TIJDELIJKE DATA (zonder databank)
         // Deze lijst blijft bestaan zolang de app draait
         // ===============================
