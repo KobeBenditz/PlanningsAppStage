@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PlanningsAppStage</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/PlanningsAppStage.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-light bg-light border-bottom mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/TWA-logo-def_kleur-367w.png" alt="TWA logo" class="header-logo" />
+                </a>
+                @{
+                    var currentAction = Context.Request.RouteValues["action"]?.ToString();
+                }
+                <div class="nav-buttons">
+                    <a class="nav-button @(currentAction == "Index" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Index</a>
+                    <a class="nav-button @(currentAction == "OverzichtPlanning" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="OverzichtPlanning">Overzicht planning</a>
+                    <a class="nav-button @(currentAction == "InfoMedewerkers" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="InfoMedewerkers">Info medewerkers</a>
+                    <a class="nav-button @(currentAction == "InfoWorkshops" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="InfoWorkshops">Info workshops</a>
+                    <a class="nav-button @(currentAction == "InfoLocaties" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="InfoLocaties">Info locaties</a>
+                </div>
+                <div style="margin-left:auto;">
+                    <a class="nav-button @(currentAction == "Login" ? "active" : "")" asp-area="" asp-controller="Account" asp-action="Login">Log in</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- Intentionally no page content: empty web app with simple header -->
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+

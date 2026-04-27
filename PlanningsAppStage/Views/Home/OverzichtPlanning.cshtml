@@ -1,0 +1,106 @@
+@model List<PlanningsAppStage.Models.Workshop>
+
+@{
+    // Titel van de pagina
+    // Deze titel wordt ook gebruikt in de <title> van de layout
+    ViewData["Title"] = "Overzicht planning";
+}
+
+<!-- ========================================= -->
+<!-- BOVENSTE DEEL: WORKSHOP TOEVOEGEN -->
+<!-- ========================================= -->
+<!--
+    Dit formulier is voorlopig alleen visueel.
+    Alle velden zijn invulbaar, maar:
+    - de knop doet nog niets
+    - de ingevulde data wordt nergens opgeslagen
+-->
+
+
+<h2>Planning aanpassen</h2>
+<form action="/Home/OverzichtPlanning" method="post">
+    <div class="row mb-3">
+
+        <!-- Datum van de workshop -->
+        <div class="col-md-2">
+            <label class="form-label">Datum</label>
+            <input type="date" class="form-control" name="Datum" />
+        </div>
+
+        <!-- Uren van de workshop -->
+        <div class="col-md-2">
+            <label class="form-label">Uren</label>
+            <input type="text"
+                   class="form-control"
+                   name="Uren"
+                   placeholder="bv. 9:00-15:00" />
+        </div>
+
+        <!-- Locatie -->
+        <div class="col-md-3">
+            <label class="form-label">Locatie</label>
+            <input type="text" class="form-control" name="Locatie" />
+        </div>
+
+        <!-- Titel van de workshop -->
+        <div class="col-md-3">
+            <label class="form-label">Titel</label>
+            <input type="text" class="form-control" name="Titel" />
+        </div>
+
+        <!-- Lesgever -->
+        <div class="col-md-2">
+            <label class="form-label">Lesgever</label>
+            <input type="text" class="form-control" name="Lesgever" />
+        </div>
+    </div>
+
+    <!-- Nu is deze knop effectief werkend -->
+    <button type="submit" class="btn btn-success">
+        Toevoegen
+    </button>
+</form>
+
+
+
+
+
+<hr />
+
+<!-- ========================================= -->
+<!-- ONDERSTE DEEL: TABEL MET WORKSHOPS -->
+<!-- ========================================= -->
+
+<h2>Overzicht workshops</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Datum</th>
+            <th>Uren</th>
+            <th>Locatie</th>
+            <th>Titel</th>
+            <th>Lesgever</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @*
+            We overlopen hier de lijst van workshops
+            die vanuit de controller werd doorgestuurd.
+            Elke workshop wordt één rij in de tabel.
+        *@
+        @foreach (var workshop in Model)
+        {
+            <tr>
+                <td>@workshop.Datum</td>
+                <td>@workshop.Uren</td>
+                <td>@workshop.Locatie</td>
+                <td>@workshop.Titel</td>
+                <td>@workshop.Lesgever</td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+

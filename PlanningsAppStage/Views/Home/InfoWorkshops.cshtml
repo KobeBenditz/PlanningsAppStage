@@ -1,0 +1,87 @@
+@model List<PlanningsAppStage.Models.WorkshopInfo>
+
+@{
+    // Titel van de pagina
+    ViewData["Title"] = "Info workshops";
+}
+
+<!-- ========================================= -->
+<!-- BOVENSTE DEEL: WORKSHOP TOEVOEGEN -->
+<!-- ========================================= -->
+<!--
+    Dit formulier is voorlopig alleen visueel.
+    Alle velden zijn invulbaar, maar doen nog niets.
+-->
+
+<h2>Workshop toevoegen</h2>
+
+<form>
+    <div class="row mb-3">
+
+        <div class="col-md-2">
+            <label class="form-label">Code</label>
+            <input type="text" class="form-control" />
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Titel</label>
+            <input type="text" class="form-control" />
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Aantal dagen</label>
+            <input type="number" class="form-control" />
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Verkorte versie mogelijk</label>
+            <input type="text" class="form-control" placeholder="bv. 1-2-3" />
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Aantal beschikbaar</label>
+            <input type="number" class="form-control" />
+        </div>
+    </div>
+
+    <!-- Knop doet voorlopig niets -->
+    <button type="button" class="btn btn-success">
+        Toevoegen
+    </button>
+</form>
+
+<hr />
+
+<!-- ========================================= -->
+<!-- TABEL: OVERZICHT WORKSHOPS -->
+<!-- ========================================= -->
+
+<h2>Overzicht workshops</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Titel</th>
+            <th>Aantal dagen</th>
+            <th>Aantal beschikbaar</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @*
+            We lopen door alle workshops uit de controller
+            Elke workshop wordt één rij in de tabel
+        *@
+        @foreach (var workshop in Model)
+        {
+            <tr>
+                <td>@workshop.Code</td>
+                <td>@workshop.Titel</td>
+                <td>@workshop.AantalDagen</td>
+                <td>@workshop.AantalBeschikbaar</td>
+            </tr>
+        }
+
+    </tbody>
+</table>

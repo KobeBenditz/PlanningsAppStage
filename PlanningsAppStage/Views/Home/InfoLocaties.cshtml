@@ -1,0 +1,111 @@
+@model List<PlanningsAppStage.Models.Locatie>
+
+@{
+    // Titel van de pagina
+    ViewData["Title"] = "Info locaties";
+}
+
+<!-- ========================================= -->
+<!-- BOVENSTE DEEL: LOCATIE TOEVOEGEN -->
+<!-- ========================================= -->
+<!--
+    Dit formulier volgt de afbeelding:
+    - meer invulvelden dan kolommen
+    - invulbaar, maar doet voorlopig niets
+-->
+
+<h2>Locatie toevoegen</h2>
+
+<form>
+    <div class="row mb-3">
+
+        <!-- Naam van de locatie -->
+        <div class="col-md-3">
+            <label class="form-label">Naam</label>
+            <input type="text" class="form-control" value="De Stip Linden" />
+        </div>
+
+        <!-- Adres (opgesplitst) -->
+        <div class="col-md-3">
+            <label class="form-label">Adres</label>
+            <input type="text" class="form-control" value="Martelarenplaats" />
+        </div>
+
+        <div class="col-md-1">
+            <label class="form-label">Nr</label>
+            <input type="text" class="form-control" value="1" />
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Gemeente</label>
+            <input type="text" class="form-control" value="Linden" />
+        </div>
+
+        <div class="col-md-1">
+            <label class="form-label">Postcode</label>
+            <input type="text" class="form-control" value="3210" />
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <!-- Soorten -->
+        <div class="col-md-2">
+            <label class="form-label">Soorten</label>
+            <input type="text" class="form-control" value="Kamp" />
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Soorten</label>
+            <input type="text" class="form-control" value="Event" />
+        </div>
+
+        <!-- Startuur -->
+        <div class="col-md-2">
+            <label class="form-label">Startuur</label>
+            <input type="time" class="form-control" value="10:00" />
+        </div>
+
+        <!-- Einduur -->
+        <div class="col-md-2">
+            <label class="form-label">Einduur</label>
+            <input type="time" class="form-control" value="17:00" />
+        </div>
+    </div>
+
+    <!-- Knop doet voorlopig niets -->
+    <button type="button" class="btn btn-success">
+        Toevoegen
+    </button>
+</form>
+
+<hr />
+
+<!-- ========================================= -->
+<!-- TABEL: OVERZICHT LOCATIES -->
+<!-- ========================================= -->
+
+<h2>Overzicht locaties</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Naam</th>
+            <th>Adres</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @*
+            We overlopen de lijst van locaties
+            Elke locatie wordt één rij in de tabel
+        *@
+        @foreach (var locatie in Model)
+        {
+            <tr>
+                <td>@locatie.Naam</td>
+                <td>@locatie.Adres</td>
+            </tr>
+        }
+
+    </tbody>
+</table>
