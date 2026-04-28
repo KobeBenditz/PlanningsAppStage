@@ -16,67 +16,57 @@
 
 <h2>Locatie toevoegen</h2>
 
-<form>
+<form method="post">
     <div class="row mb-3">
 
         <!-- Naam van de locatie -->
         <div class="col-md-3">
             <label class="form-label">Naam</label>
-            <input type="text" class="form-control" value="De Stip Linden" />
+            <input type="text"
+                   class="form-control"
+                   name="Naam" />
         </div>
 
-        <!-- Adres (opgesplitst) -->
+        <!-- Straat -->
         <div class="col-md-3">
-            <label class="form-label">Adres</label>
-            <input type="text" class="form-control" value="Martelarenplaats" />
+            <label class="form-label">Straat</label>
+            <input type="text"
+                   class="form-control"
+                   name="Straat" />
         </div>
 
+        <!-- Nr -->
         <div class="col-md-1">
             <label class="form-label">Nr</label>
-            <input type="text" class="form-control" value="1" />
+            <input type="text"
+                   class="form-control"
+                   name="Nummer" />
         </div>
 
+        <!-- Gemeente -->
         <div class="col-md-2">
             <label class="form-label">Gemeente</label>
-            <input type="text" class="form-control" value="Linden" />
+            <input type="text"
+                   class="form-control"
+                   name="Gemeente" />
         </div>
 
+        <!-- Postcode -->
         <div class="col-md-1">
             <label class="form-label">Postcode</label>
-            <input type="text" class="form-control" value="3210" />
+            <input type="text"
+                   class="form-control"
+                   name="Postcode" />
         </div>
+
     </div>
 
-    <div class="row mb-3">
-        <!-- Soorten -->
-        <div class="col-md-2">
-            <label class="form-label">Soorten</label>
-            <input type="text" class="form-control" value="Kamp" />
-        </div>
-
-        <div class="col-md-2">
-            <label class="form-label">Soorten</label>
-            <input type="text" class="form-control" value="Event" />
-        </div>
-
-        <!-- Startuur -->
-        <div class="col-md-2">
-            <label class="form-label">Startuur</label>
-            <input type="time" class="form-control" value="10:00" />
-        </div>
-
-        <!-- Einduur -->
-        <div class="col-md-2">
-            <label class="form-label">Einduur</label>
-            <input type="time" class="form-control" value="17:00" />
-        </div>
-    </div>
-
-    <!-- Knop doet voorlopig niets -->
-    <button type="button" class="btn btn-success">
+    <button type="submit" class="btn btn-primary">
         Toevoegen
     </button>
 </form>
+
+
 
 <hr />
 

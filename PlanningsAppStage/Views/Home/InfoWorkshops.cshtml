@@ -15,40 +15,71 @@
 
 <h2>Workshop toevoegen</h2>
 
-<form>
-    <div class="row mb-3">
+<form method="post">
+    <div class="row mb-3 align-items-end">
 
+        <!-- Code -->
         <div class="col-md-2">
             <label class="form-label">Code</label>
-            <input type="text" class="form-control" />
+            <input type="text"
+                   class="form-control"
+                   name="Code" />
         </div>
 
-        <div class="col-md-3">
+        <!-- Titel -->
+        <div class="col-md-4">
             <label class="form-label">Titel</label>
-            <input type="text" class="form-control" />
+            <input type="text"
+                   class="form-control"
+                   name="Titel" />
         </div>
 
+        <!-- Soort -->
         <div class="col-md-2">
+            <label class="form-label">Soort</label>
+            <select class="form-control"
+                    name="Soort">
+                <option value="">-- kies --</option>
+                <option value="Kamp">Kamp</option>
+                <option value="Event">Event</option>
+            </select>
+        </div>
+
+        <!-- Aantal dagen (kort input, volledig label) -->
+        <div class="col-md-1">
             <label class="form-label">Aantal dagen</label>
-            <input type="number" class="form-control" />
+            <input type="number"
+                   class="form-control"
+                   name="AantalDagen"
+                   min="1" />
         </div>
 
-        <div class="col-md-3">
-            <label class="form-label">Verkorte versie mogelijk</label>
-            <input type="text" class="form-control" placeholder="bv. 1-2-3" />
-        </div>
-
-        <div class="col-md-2">
+        <!-- Aantal beschikbaar (kort input, volledig label) -->
+        <div class="col-md-1">
             <label class="form-label">Aantal beschikbaar</label>
-            <input type="number" class="form-control" />
+            <input type="number"
+                   class="form-control"
+                   name="AantalBeschikbaar"
+                   min="0" />
         </div>
+
+        <!-- Verkorte versie -->
+        <div class="col-md-2">
+            <label class="form-label">Verkorte versie mogelijk</label>
+            <input type="text"
+                   class="form-control"
+                   name="VerkorteVersie"
+                   placeholder="bv. 1-2" />
+        </div>
+
     </div>
 
-    <!-- Knop doet voorlopig niets -->
-    <button type="button" class="btn btn-success">
+    <button type="submit" class="btn btn-success">
         Toevoegen
     </button>
 </form>
+``
+``
 
 <hr />
 
@@ -63,6 +94,7 @@
         <tr>
             <th>Code</th>
             <th>Titel</th>
+            <th>Soort</th>
             <th>Aantal dagen</th>
             <th>Aantal beschikbaar</th>
         </tr>
@@ -78,6 +110,7 @@
             <tr>
                 <td>@workshop.Code</td>
                 <td>@workshop.Titel</td>
+                <td>@workshop.Soort</td>
                 <td>@workshop.AantalDagen</td>
                 <td>@workshop.AantalBeschikbaar</td>
             </tr>

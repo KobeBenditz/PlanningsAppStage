@@ -1,13 +1,22 @@
 ﻿namespace PlanningsAppStage.Models
 {
-    // Deze klasse stelt één locatie voor
-    // Enkel de velden die we in de tabel nodig hebben
     public class Locatie
     {
-        // Naam van de locatie
+        // === WORDT INGEVULD VIA FORMULIER ===
         public string Naam { get; set; }
+        public string Straat { get; set; }
+        public string Nummer { get; set; }
+        public string Gemeente { get; set; }
+        public string Postcode { get; set; }
 
-        // Volledig adres van de locatie
-        public string Adres { get; set; }
+        // === WORDT NIET INGEVULD, MAAR BEREKEND ===
+        // Dit wordt gebruikt in de tabel
+        public string Adres
+        {
+            get
+            {
+                return $"{Straat} {Nummer}, {Postcode} {Gemeente}";
+            }
+        }
     }
 }

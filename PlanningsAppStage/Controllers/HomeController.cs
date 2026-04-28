@@ -24,6 +24,42 @@ namespace PlanningsAppStage.Controllers
         };
 
         // ===============================
+        // TIJDELIJKE DATA - WORKSHOP INFO
+        // ===============================
+        private static List<WorkshopInfo> _workshopInfos = new List<WorkshopInfo>
+        {
+            new WorkshopInfo
+            {
+                Code = "2627NS013",
+                Titel = "Wonderwerken",
+                AantalDagen = 3,
+                AantalBeschikbaar = 4
+            },
+            new WorkshopInfo
+            {
+                Code = "2627NS010",
+                Titel = "Lego Robot Reeks: Robo-Art",
+                AantalDagen = 5,
+                AantalBeschikbaar = 2
+            }
+        };
+
+        // ===============================
+        // TIJDELIJKE DATA - LOCATIES
+        // ===============================
+        private static List<Locatie> _locaties = new List<Locatie>
+        {
+            new Locatie
+            {
+                Naam = "De Stip Linden",
+                Straat = "Martelarenplaats",
+                Nummer = "1",
+                Gemeente = "Linden",
+                Postcode = "3210"
+            }
+        };
+
+        // ===============================
         // HOME
         // ===============================
         public IActionResult Index()
@@ -63,37 +99,56 @@ namespace PlanningsAppStage.Controllers
         }
 
         // ===============================
-        // INFO WORKSHOPS (hardcoded)
+        // INFO WORKSHOPS - GET
+        // Toont formulier + tabel
         // ===============================
+        [HttpGet]
         public IActionResult InfoWorkshops()
         {
-            var workshops = new List<WorkshopInfo>
-            {
-                new WorkshopInfo { Code = "2627NS013", Titel = "Wonderwerken", AantalDagen = 3, AantalBeschikbaar = 4 },
-                new WorkshopInfo { Code = "2627NS010", Titel = "Lego Robot Reeks: Robo-Art", AantalDagen = 5, AantalBeschikbaar = 2 },
-                new WorkshopInfo { Code = "2627NS001", Titel = "Circus Techtacular", AantalDagen = 4, AantalBeschikbaar = 3 },
-                new WorkshopInfo { Code = "2627NS007", Titel = "STEM-Experimenten", AantalDagen = 3, AantalBeschikbaar = 2 }
-            };
-
-            return View(workshops);
+            return View(_workshopInfos);
         }
 
+
         // ===============================
-        // INFO LOCATIES (hardcoded)
+        // INFO WORKSHOPS - POST
+        // Ontvangt formulier en voegt toe
         // ===============================
+        [HttpPost]
+        public IActionResult InfoWorkshops(WorkshopInfo nieuweWorkshop)
+        {
+            _workshopInfos.Add(nieuweWorkshop);
+
+            // voorkomt dubbele toevoeging bij refresh
+
+            return RedirectToAction("InfoWorkshops");
+        }
+
+
+
+        // ===============================
+        // INFO LOCATIES - GET
+        // Toont formulier + tabel
+        // ===============================
+        [HttpGet]
         public IActionResult InfoLocaties()
         {
-            var locaties = new List<Locatie>
-            {
-                new Locatie
-                {
-                    Naam = "De Stip Linden",
-                    Adres = "Martelarenplaats 1, 3210 Linden"
-                }
-            };
-
-            return View(locaties);
+            return View(_locaties);
         }
+
+
+        // ===============================
+        // INFO LOCATIES - POST
+        // Ontvangt formulier en voegt toe
+        // ===============================
+        [HttpPost]
+        public IActionResult InfoLocaties(Locatie nieuweLocatie)
+        {
+            _locaties.Add(nieuweLocatie);
+
+            // voorkomt dubbele toevoeging bij refresh
+            return RedirectToAction("InfoLocaties");
+        }
+
 
         // ===============================
         // ERROR / PRIVACY (standaard)
