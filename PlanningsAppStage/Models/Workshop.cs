@@ -5,7 +5,7 @@
     public class Workshop
     {
         // Datum van de workshop
-        public string Datum { get; set; }
+        public DateTime Datum { get; set; }
 
         // Uren waarin de workshop doorgaat
         public string Uren { get; set; }

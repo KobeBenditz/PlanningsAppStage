@@ -57,6 +57,18 @@
                    placeholder="Zoek locatie"
                    required />
         </div>
+        
+        <datalist id="locatieLijst">
+            @foreach (var l in ViewBag.Locaties)
+            {
+                <option value="@l.Naam"
+                        data-soorten='@Html.Raw(
+                                        System.Text.Json.JsonSerializer.Serialize(l.Soorten)
+                                    )'>
+                </option>
+            }
+        </datalist>
+
 
     </div>
 
@@ -64,7 +76,16 @@
     <!-- VERBORGEN UREN -->
     <!-- ========================= -->
     <!-- Wordt automatisch ingevuld via JS -->
-    <input type="hidden" id="uren" name="uren" />
+    
+    <div class="col-md-4">
+        <label class="form-label">Uren</label>
+        <input type="hidden"
+               id="urenInput"
+               name="uren"
+               class="form-control"
+               readonly />
+    </div>
+
 
     <!-- ========================= -->
     <!-- DAGEN -->
@@ -123,7 +144,7 @@
         @foreach (var workshop in Model)
         {
             <tr>
-                <td>@workshop.Datum</td>
+                <td>@workshop.Datum.ToString("dd/MM/yyyy")</td>
                 <td>@workshop.Uren</td>
                 <td>@workshop.Locatie</td>
                 <td>@workshop.Titel</td>
@@ -144,7 +165,7 @@
         const aantalDagenSelect = document.getElementById("aantalDagen");
         const dagenContainer = document.getElementById("dagenContainer");
         const locatieInput = document.getElementById("locatieZoek");
-        const urenInput = document.getElementById("uren");
+        const urenInput = document.getElementById("urenInput");
 
         /*
         =================================================
@@ -223,23 +244,29 @@
 
         /*
         =================================================
-        LOCATIE GEKOZEN
+        LOCATIE GEKOZEN (DATALIST)
         - Automatisch uren bepalen
         =================================================
         */
-        locatieInput.addEventListener("change", function () {
+        locatieInput.addEventListener("input", function () {
 
+            // Zoek bijhorende option in de datalist
             const optie = [...document.querySelectorAll("#locatieLijst option")]
                 .find(o => o.value === this.value);
 
-            if (!optie) return;
+            // Ongeldige locatie → uren leegmaken
+            if (!optie) {
+                urenInput.value = "";
+                return;
+            }
 
+            // Soorten uitlezen
             const soorten = JSON.parse(optie.dataset.soorten || "[]");
 
-            // Simpel gehouden:
-            // eerste soort nemen
+            // Simpel gehouden: eerste soort nemen
             if (soorten.length > 0) {
-                urenInput.value = soorten[0].StartUur + "-" + soorten[0].EindUur;
+                urenInput.value =
+                    soorten[0].StartUur + " - " + soorten[0].EindUur;
             }
         });
     </script>

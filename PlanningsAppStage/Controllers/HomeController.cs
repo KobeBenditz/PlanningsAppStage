@@ -15,7 +15,7 @@ namespace PlanningsAppStage.Controllers
         {
             new Workshop
             {
-                Datum = "27/04/2026",
+                Datum = new DateTime(2026, 4, 27),
                 Uren = "9:00-15:00",
                 Locatie = "De Stip Linden",
                 Titel = "Circus Techtacular",
@@ -55,9 +55,19 @@ namespace PlanningsAppStage.Controllers
                 Straat = "Martelarenplaats",
                 Nummer = "1",
                 Gemeente = "Linden",
-                Postcode = "3210"
+                Postcode = "3210",
+                Soorten = new List<SoortInfo>
+                {
+                    new SoortInfo
+                    {
+                        Soort = "Kamp",
+                        StartUur = "09:00",
+                        EindUur = "15:00"
+                    }
+                }
             }
         };
+
 
         // ===============================
         // HOME
@@ -80,8 +90,14 @@ namespace PlanningsAppStage.Controllers
             // Locaties
             ViewBag.Locaties = _locaties;
 
-            // Geplande workshops (tabel)
-            return View(_workshops);
+            // Geplande workshops (tabel) - gesorteerd op datum
+
+            return View(
+                _workshops
+                    .OrderBy(w => w.Datum)
+                    .ToList()
+            );
+
         }
 
         // ===============================
@@ -99,17 +115,19 @@ namespace PlanningsAppStage.Controllers
         )
         {
             // Voor elke ingevulde dag maken we één nieuwe workshop aan
+
             for (int i = 0; i < Datum.Count; i++)
             {
                 _workshops.Add(new Workshop
                 {
-                    Datum = Datum[i],
+                    Datum = DateTime.Parse(Datum[i]), // ✅ HTML date → DateTime
                     Uren = uren,
                     Locatie = locatieNaam,
                     Titel = workshopTitel,
                     Lesgever = Lesgever[i]
                 });
             }
+
 
             // Redirect voorkomt dubbele toevoeging bij refresh
             return RedirectToAction("OverzichtPlanning");
