@@ -5,6 +5,7 @@
     ViewData["Title"] = "Info locaties";
 }
 
+
 <!-- ========================================= -->
 <!-- BOVENSTE DEEL: LOCATIE TOEVOEGEN -->
 <!-- ========================================= -->
@@ -16,10 +17,15 @@
 
 <h2>Locatie toevoegen</h2>
 
+
+
 <form method="post">
+
+    <!-- ========================= -->
+    <!-- BASISGEGEVENS LOCATIE -->
+    <!-- ========================= -->
     <div class="row mb-3">
 
-        <!-- Naam van de locatie -->
         <div class="col-md-3">
             <label class="form-label">Naam</label>
             <input type="text"
@@ -27,7 +33,6 @@
                    name="Naam" />
         </div>
 
-        <!-- Straat -->
         <div class="col-md-3">
             <label class="form-label">Straat</label>
             <input type="text"
@@ -35,7 +40,6 @@
                    name="Straat" />
         </div>
 
-        <!-- Nr -->
         <div class="col-md-1">
             <label class="form-label">Nr</label>
             <input type="text"
@@ -43,7 +47,6 @@
                    name="Nummer" />
         </div>
 
-        <!-- Gemeente -->
         <div class="col-md-2">
             <label class="form-label">Gemeente</label>
             <input type="text"
@@ -51,7 +54,6 @@
                    name="Gemeente" />
         </div>
 
-        <!-- Postcode -->
         <div class="col-md-1">
             <label class="form-label">Postcode</label>
             <input type="text"
@@ -61,10 +63,31 @@
 
     </div>
 
-    <button type="submit" class="btn btn-primary">
+    <!-- ========================= -->
+    <!-- AANTAL SOORTEN -->
+    <!-- ========================= -->
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <label class="form-label">Aantal soorten</label>
+            <input type="number"
+                   id="aantalSoorten"
+                   class="form-control"
+                   value="1"
+                   min="1" />
+        </div>
+    </div>
+
+    <!-- ========================= -->
+    <!-- DYNAMISCHE SOORTEN -->
+    <!-- ========================= -->
+    <div id="soortenContainer"></div>
+
+    <button type="submit" class="btn btn-primary mt-3">
         Toevoegen
     </button>
+
 </form>
+
 
 
 
@@ -99,3 +122,57 @@
 
     </tbody>
 </table>
+@section Scripts {
+    <script>
+        const aantalInput = document.getElementById("aantalSoorten");
+        const container = document.getElementById("soortenContainer");
+
+        function renderSoorten() {
+
+            // Alles leegmaken bij elke wijziging
+            container.innerHTML = "";
+
+            const aantal = parseInt(aantalInput.value);
+
+            // Voor elk gekozen aantal bouwen we een rij
+            for (let i = 0; i < aantal; i++) {
+
+                const row = document.createElement("div");
+                row.className = "row mb-3";
+
+                row.innerHTML = `
+                    <div class="col-md-2">
+                        <label class="form-label">Soort</label>
+                        <select class="form-control" name="Soorten[${i}].Soort">
+                            <option value="Kamp">Kamp</option>
+                            <option value="Event">Event</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label">Startuur</label>
+                        <input type="time"
+                               class="form-control"
+                               name="Soorten[${i}].StartUur" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <label class="form-label">Einduur</label>
+                        <input type="time"
+                               class="form-control"
+                               name="Soorten[${i}].EindUur" />
+                    </div>
+                `;
+
+                container.appendChild(row);
+            }
+        }
+
+        // Hertekenen bij aanpassen van aantal
+        aantalInput.addEventListener("change", renderSoorten);
+
+        // Bij het laden van de pagina
+        renderSoorten();
+    </script>
+}
+``
