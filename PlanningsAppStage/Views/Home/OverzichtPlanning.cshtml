@@ -6,6 +6,7 @@
     ViewData["Title"] = "Overzicht planning";
 }
 
+
 <!-- ========================================= -->
 <!-- BOVENSTE DEEL: WORKSHOP TOEVOEGEN -->
 <!-- ========================================= -->
@@ -18,48 +19,77 @@
 
 
 <h2>Planning aanpassen</h2>
-<form action="/Home/OverzichtPlanning" method="post">
+<form method="post">
+
+    <!-- ========================= -->
+    <!-- BASISGEGEVENS WORKSHOP -->
+    <!-- ========================= -->
     <div class="row mb-3">
 
-        <!-- Datum van de workshop -->
-        <div class="col-md-2">
-            <label class="form-label">Datum</label>
-            <input type="date" class="form-control" name="Datum" />
-        </div>
-
-        <!-- Uren van de workshop -->
-        <div class="col-md-2">
-            <label class="form-label">Uren</label>
+        <!-- WORKSHOP -->
+        <div class="col-md-4">
+            <label class="form-label">Workshop</label>
             <input type="text"
+                   id="workshopZoek"
+                   name="workshopTitel"
                    class="form-control"
-                   name="Uren"
-                   placeholder="bv. 9:00-15:00" />
+                   list="workshopLijst"
+                   placeholder="Zoek workshop"
+                   required />
         </div>
 
-        <!-- Locatie -->
-        <div class="col-md-3">
-            <label class="form-label">Locatie</label>
-            <input type="text" class="form-control" name="Locatie" />
-        </div>
-
-        <!-- Titel van de workshop -->
-        <div class="col-md-3">
-            <label class="form-label">Titel</label>
-            <input type="text" class="form-control" name="Titel" />
-        </div>
-
-        <!-- Lesgever -->
+        <!-- AANTAL DAGEN -->
         <div class="col-md-2">
-            <label class="form-label">Lesgever</label>
-            <input type="text" class="form-control" name="Lesgever" />
+            <label class="form-label">Aantal dagen</label>
+            <select id="aantalDagen"
+                    class="form-select">
+            </select>
         </div>
+
+        <!-- LOCATIE -->
+        <div class="col-md-4">
+            <label class="form-label">Locatie</label>
+            <input type="text"
+                   id="locatieZoek"
+                   name="locatieNaam"
+                   class="form-control"
+                   list="locatieLijst"
+                   placeholder="Zoek locatie"
+                   required />
+        </div>
+
     </div>
 
-    <!-- Nu is deze knop effectief werkend -->
-    <button type="submit" class="btn btn-success">
+    <!-- ========================= -->
+    <!-- VERBORGEN UREN -->
+    <!-- ========================= -->
+    <!-- Wordt automatisch ingevuld via JS -->
+    <input type="hidden" id="uren" name="uren" />
+
+    <!-- ========================= -->
+    <!-- DAGEN -->
+    <!-- ========================= -->
+    <div id="dagenContainer"></div>
+
+    <button type="submit" class="btn btn-success mt-3">
         Toevoegen
     </button>
+
 </form>
+
+<!-- ========================= -->
+<!-- WORKSHOP SUGGESTIES -->
+<!-- ========================= -->
+<datalist id="workshopLijst">
+    @foreach (var w in ViewBag.WorkshopInfos)
+    {
+        <option value="@w.Titel"
+                data-dagen="@w.AantalDagen"
+                data-verkort="@w.VerkorteVersie"
+                data-soort="@w.Soort">
+        </option>
+    }
+</datalist>
 
 
 
@@ -103,4 +133,115 @@
 
     </tbody>
 </table>
+@section Scripts {
+    <script>
+        /*
+        =================================================
+        REFERENTIES NAAR ELEMENTEN
+        =================================================
+        */
+        const workshopInput = document.getElementById("workshopZoek");
+        const aantalDagenSelect = document.getElementById("aantalDagen");
+        const dagenContainer = document.getElementById("dagenContainer");
+        const locatieInput = document.getElementById("locatieZoek");
+        const urenInput = document.getElementById("uren");
+
+        /*
+        =================================================
+        WORKSHOP GEKOZEN
+        - Aantal dagen invullen
+        - Verkorte opties toevoegen
+        - Dag-lijnen genereren
+        =================================================
+        */
+        workshopInput.addEventListener("change", function () {
+
+            // Zoek de juiste option in de datalist
+            const optie = [...document.querySelectorAll("#workshopLijst option")]
+                .find(o => o.value === this.value);
+
+            if (!optie) return;
+
+            const standaardDagen = optie.dataset.dagen;
+            const verkorteVersie = optie.dataset.verkort;
+
+            // Dropdown leegmaken
+            aantalDagenSelect.innerHTML = "";
+
+            // Standaard aantal dagen toevoegen
+            voegAantalToe(standaardDagen);
+
+            // Verkorte versie bv "1-2-3"
+            if (verkorteVersie) {
+                verkorteVersie.split("-").forEach(v => voegAantalToe(v));
+            }
+
+            // Standaardwaarde selecteren
+            aantalDagenSelect.value = standaardDagen;
+
+            // Dagen genereren
+            genereerDagen(standaardDagen);
+        });
+
+        // Hulpfunctie om geen duplicaten te krijgen
+        function voegAantalToe(value) {
+            if ([...aantalDagenSelect.options].some(o => o.value === value)) return;
+
+            const opt = document.createElement("option");
+            opt.value = value;
+            opt.text = value;
+            aantalDagenSelect.appendChild(opt);
+        }
+
+        // Bij wijziging aantal dagen opnieuw lijnen maken
+        aantalDagenSelect.addEventListener("change", function () {
+            genereerDagen(this.value);
+        });
+
+        /*
+        =================================================
+        DAGEN GENEREREN
+        - Per dag: datum, lesgever, code
+        =================================================
+        */
+        function genereerDagen(aantal) {
+
+            // Container leegmaken
+            dagenContainer.innerHTML = "";
+
+            for (let i = 0; i < aantal; i++) {
+
+                dagenContainer.innerHTML += `
+                    <div>
+                        <input type="date" name="Datum[]" required />
+                        <input type="text" name="Lesgever[]" placeholder="Lesgever" />
+                        <input type="text" placeholder="Code" required />
+                    </div>
+                `;
+            }
+        }
+
+        /*
+        =================================================
+        LOCATIE GEKOZEN
+        - Automatisch uren bepalen
+        =================================================
+        */
+        locatieInput.addEventListener("change", function () {
+
+            const optie = [...document.querySelectorAll("#locatieLijst option")]
+                .find(o => o.value === this.value);
+
+            if (!optie) return;
+
+            const soorten = JSON.parse(optie.dataset.soorten || "[]");
+
+            // Simpel gehouden:
+            // eerste soort nemen
+            if (soorten.length > 0) {
+                urenInput.value = soorten[0].StartUur + "-" + soorten[0].EindUur;
+            }
+        });
+    </script>
+}
 

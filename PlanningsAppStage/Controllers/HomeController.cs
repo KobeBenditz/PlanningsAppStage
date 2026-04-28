@@ -74,21 +74,47 @@ namespace PlanningsAppStage.Controllers
         [HttpGet]
         public IActionResult OverzichtPlanning()
         {
+            // Workshop DEFINITIES (Info workshops)
+            ViewBag.WorkshopInfos = _workshopInfos;
+
+            // Locaties
+            ViewBag.Locaties = _locaties;
+
+            // Geplande workshops (tabel)
             return View(_workshops);
         }
 
         // ===============================
         // OVERZICHT PLANNING - POST
-        // Ontvangt formulier en voegt toe
+        // Ontvangt formulier met meerdere dagen
+        // Maakt per dag één workshop-item aan
         // ===============================
         [HttpPost]
-        public IActionResult OverzichtPlanning(Workshop nieuweWorkshop)
+        public IActionResult OverzichtPlanning(
+            string workshopTitel,
+            string locatieNaam,
+            string uren,
+            List<string> Datum,
+            List<string> Lesgever
+        )
         {
-            _workshops.Add(nieuweWorkshop);
+            // Voor elke ingevulde dag maken we één nieuwe workshop aan
+            for (int i = 0; i < Datum.Count; i++)
+            {
+                _workshops.Add(new Workshop
+                {
+                    Datum = Datum[i],
+                    Uren = uren,
+                    Locatie = locatieNaam,
+                    Titel = workshopTitel,
+                    Lesgever = Lesgever[i]
+                });
+            }
 
-            // Redirect zodat refresh geen dubbele toevoeging doet
+            // Redirect voorkomt dubbele toevoeging bij refresh
             return RedirectToAction("OverzichtPlanning");
         }
+
 
         // ===============================
         // INFO MEDEWERKERS
