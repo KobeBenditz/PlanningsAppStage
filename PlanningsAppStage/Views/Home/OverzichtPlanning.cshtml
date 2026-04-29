@@ -20,6 +20,14 @@
 
 <h2>Planning aanpassen</h2>
 <form method="post">
+    
+    @if (TempData["Foutmelding"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Foutmelding"]
+        </div>
+    }
+
 
     <!-- ========================= -->
     <!-- BASISGEGEVENS WORKSHOP -->
@@ -78,7 +86,7 @@
     <!-- Wordt automatisch ingevuld via JS -->
     
     <div class="col-md-4">
-        <label class="form-label">Uren</label>
+        <label class="form-label"></label>
         <input type="hidden"
                id="urenInput"
                name="uren"

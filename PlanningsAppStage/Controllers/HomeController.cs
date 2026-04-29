@@ -13,34 +13,47 @@ namespace PlanningsAppStage.Controllers
         // ===============================
         private static List<Workshop> _workshops = new List<Workshop>
         {
+
             new Workshop
             {
-                Datum = new DateTime(2026, 4, 27),
-                Uren = "9:00-15:00",
+                // Altijd een toekomstige datum → tests blijven geldig
+                Datum = DateTime.Today.AddDays(3),
+
+                // Vast maar leesbaar
+                Uren = "09:00 - 15:00",
+
                 Locatie = "De Stip Linden",
-                Titel = "Circus Techtacular",
-                Lesgever = "Ik wil deze les geven"
+
+                // Duidelijk dat dit testdata is
+                Titel = "TEST – Circus & Technologie",
+
+                Lesgever = "TEST – Nog toe te wijzen"
             }
+
         };
 
         // ===============================
-        // TIJDELIJKE DATA - WORKSHOP INFO
+        // TESTDATA – WORKSHOP DEFINITIES
         // ===============================
-        private static List<WorkshopInfo> _workshopInfos = new List<WorkshopInfo>
+        private static List<WorkshopInfo> _workshopInfos = new()
         {
             new WorkshopInfo
             {
-                Code = "2627NS013",
-                Titel = "Wonderwerken",
+                Code = "1",
+                Titel = "TEST – Wonderwerken",
+                Soort = "Kamp",
                 AantalDagen = 3,
-                AantalBeschikbaar = 4
+                AantalBeschikbaar = 4,
+                VerkorteVersie = "1-2"
             },
             new WorkshopInfo
             {
-                Code = "2627NS010",
-                Titel = "Lego Robot Reeks: Robo-Art",
+                Code = "2",
+                Titel = "TEST – Lego Robot Reeks",
+                Soort = "Event",
                 AantalDagen = 5,
-                AantalBeschikbaar = 2
+                AantalBeschikbaar = 2,
+                VerkorteVersie = "1"
             }
         };
 
@@ -63,8 +76,15 @@ namespace PlanningsAppStage.Controllers
                         Soort = "Kamp",
                         StartUur = "09:00",
                         EindUur = "15:00"
+                    },
+                    new SoortInfo
+                    {
+                        Soort = "Event",
+                        StartUur = "10:00",
+                        EindUur = "16:00"
                     }
                 }
+                
             }
         };
 
@@ -102,34 +122,87 @@ namespace PlanningsAppStage.Controllers
 
         // ===============================
         // OVERZICHT PLANNING - POST
-        // Ontvangt formulier met meerdere dagen
-        // Maakt per dag één workshop-item aan
+        // Beperkt toevoegen op basis van
+        // AantalBeschikbaar (per InfoWorkshop)
         // ===============================
         [HttpPost]
         public IActionResult OverzichtPlanning(
             string workshopTitel,
             string locatieNaam,
-            string uren,
             List<string> Datum,
             List<string> Lesgever
         )
         {
-            // Voor elke ingevulde dag maken we één nieuwe workshop aan
+            // ===============================
+            // Basisvalidatie
+            // ===============================
+            if (Datum == null || Datum.Count == 0)
+                return RedirectToAction("OverzichtPlanning");
 
+            // ===============================
+            // 1️⃣ WorkshopInfo ophalen
+            // ===============================
+            var workshopInfo = _workshopInfos
+                .FirstOrDefault(w => w.Titel == workshopTitel);
+
+            if (workshopInfo == null)
+                return RedirectToAction("OverzichtPlanning");
+
+            // ===============================
+            // 2️⃣ Aantal keer al toegevoegd
+            // (per unieke workshop-groep)
+            // ===============================
+            int reedsToegevoegd = _workshops
+                .Where(w => w.Titel == workshopTitel)
+                .Select(w => w.WorkshopGroepId)
+                .Distinct()
+                .Count();
+
+            // ===============================
+            // 3️⃣ Limiet overschreden?
+            // ===============================
+            if (reedsToegevoegd >= workshopInfo.AantalBeschikbaar)
+            {
+                TempData["Foutmelding"] =
+                    $"Deze workshop kan maximaal {workshopInfo.AantalBeschikbaar} keer ingepland worden.";
+
+                return RedirectToAction("OverzichtPlanning");
+            }
+
+            // ===============================
+            // 4️⃣ Locatie + uren bepalen
+            // ===============================
+            var locatie = _locaties.FirstOrDefault(l => l.Naam == locatieNaam);
+            if (locatie == null) return RedirectToAction("OverzichtPlanning");
+
+            var soortInfo = locatie.Soorten
+                .FirstOrDefault(s => s.Soort == workshopInfo.Soort);
+
+            if (soortInfo == null) return RedirectToAction("OverzichtPlanning");
+
+            string correcteUren = $"{soortInfo.StartUur} - {soortInfo.EindUur}";
+
+            // ===============================
+            // 5️⃣ Nieuwe workshop-groep ID
+            // ===============================
+            Guid groepId = Guid.NewGuid();
+
+            // ===============================
+            // 6️⃣ Workshops toevoegen
+            // ===============================
             for (int i = 0; i < Datum.Count; i++)
             {
                 _workshops.Add(new Workshop
                 {
-                    Datum = DateTime.Parse(Datum[i]), // ✅ HTML date → DateTime
-                    Uren = uren,
+                    WorkshopGroepId = groepId,
+                    Datum = DateTime.Parse(Datum[i]),
+                    Uren = correcteUren,
                     Locatie = locatieNaam,
                     Titel = workshopTitel,
                     Lesgever = Lesgever[i]
                 });
             }
 
-
-            // Redirect voorkomt dubbele toevoeging bij refresh
             return RedirectToAction("OverzichtPlanning");
         }
 
