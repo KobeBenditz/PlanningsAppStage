@@ -102,8 +102,20 @@
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>Naam</th>
-            <th>Adres</th>
+            <th data-column="Naam">
+                Naam
+                <span class="th-buttons">
+                    <button class="sort-btn" title="Sorteren">▲</button>
+                    <button class="filter-btn" title="Filteren">🔍</button>
+                </span>
+            </th>
+            <th data-column="Adres">
+                Adres
+                <span class="th-buttons">
+                    <button class="sort-btn" title="Sorteren">▲</button>
+                    <button class="filter-btn" title="Filteren">🔍</button>
+                </span>
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -175,4 +187,4 @@
         renderSoorten();
     </script>
 }
-``
+
