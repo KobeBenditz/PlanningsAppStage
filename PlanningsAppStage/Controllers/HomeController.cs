@@ -16,6 +16,7 @@ namespace PlanningsAppStage.Controllers
 
             new Workshop
             {
+                WorkshopCode = "123ABC",
                 // Altijd een toekomstige datum → tests blijven geldig
                 Datum = DateTime.Today.AddDays(3),
 
@@ -39,7 +40,6 @@ namespace PlanningsAppStage.Controllers
         {
             new WorkshopInfo
             {
-                Code = "1",
                 Titel = "TEST – Wonderwerken",
                 Soort = "Kamp",
                 AantalDagen = 3,
@@ -48,7 +48,6 @@ namespace PlanningsAppStage.Controllers
             },
             new WorkshopInfo
             {
-                Code = "2",
                 Titel = "TEST – Lego Robot Reeks",
                 Soort = "Event",
                 AantalDagen = 5,
@@ -129,6 +128,7 @@ namespace PlanningsAppStage.Controllers
         public IActionResult OverzichtPlanning(
             string workshopTitel,
             string locatieNaam,
+            string WorkshopCode,
             List<string> Datum,
             List<string> Lesgever
         )
@@ -195,6 +195,7 @@ namespace PlanningsAppStage.Controllers
                 _workshops.Add(new Workshop
                 {
                     WorkshopGroepId = groepId,
+                    WorkshopCode = WorkshopCode,
                     Datum = DateTime.Parse(Datum[i]),
                     Uren = correcteUren,
                     Locatie = locatieNaam,

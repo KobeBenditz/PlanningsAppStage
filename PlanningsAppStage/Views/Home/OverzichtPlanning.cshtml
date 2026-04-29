@@ -65,6 +65,18 @@
                    placeholder="Zoek locatie"
                    required />
         </div>
+
+        
+        <!-- WORKSHOPCODE -->
+        <div class="col-md-4">
+            <label class="form-label">Workshopcode</label>
+            <input type="text"
+                   name="WorkshopCode"
+                   class="form-control"
+                   placeholder="Geef de workshopcode in"
+                   required />
+        </div>
+
         
         <datalist id="locatieLijst">
             @foreach (var l in ViewBag.Locaties)
@@ -135,6 +147,7 @@
 <table class="table table-bordered">
     <thead>
         <tr>
+            <th>Code</th>
             <th>Datum</th>
             <th>Uren</th>
             <th>Locatie</th>
@@ -152,6 +165,7 @@
         @foreach (var workshop in Model)
         {
             <tr>
+                <td>@workshop.WorkshopCode</td>
                 <td>@workshop.Datum.ToString("dd/MM/yyyy")</td>
                 <td>@workshop.Uren</td>
                 <td>@workshop.Locatie</td>
@@ -244,7 +258,6 @@
                     <div>
                         <input type="date" name="Datum[]" required />
                         <input type="text" name="Lesgever[]" placeholder="Lesgever" />
-                        <input type="text" placeholder="Code" required />
                     </div>
                 `;
             }

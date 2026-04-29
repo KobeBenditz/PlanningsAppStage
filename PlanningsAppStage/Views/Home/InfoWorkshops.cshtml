@@ -18,14 +18,6 @@
 <form method="post">
     <div class="row mb-3 align-items-end">
 
-        <!-- Code -->
-        <div class="col-md-2">
-            <label class="form-label">Code</label>
-            <input type="text"
-                   class="form-control"
-                   name="Code" />
-        </div>
-
         <!-- Titel -->
         <div class="col-md-4">
             <label class="form-label">Titel</label>
@@ -92,7 +84,6 @@
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>Code</th>
             <th>Titel</th>
             <th>Soort</th>
             <th>Aantal dagen</th>
@@ -108,7 +99,6 @@
         @foreach (var workshop in Model)
         {
             <tr>
-                <td>@workshop.Code</td>
                 <td>@workshop.Titel</td>
                 <td>@workshop.Soort</td>
                 <td>@workshop.AantalDagen</td>

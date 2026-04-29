@@ -6,6 +6,7 @@
     {
         public Guid WorkshopGroepId { get; set; }   // ✅ NIEUW
 
+        public string WorkshopCode { get; set; }
         public DateTime Datum { get; set; }
         public string Uren { get; set; }
         public string Locatie { get; set; }
