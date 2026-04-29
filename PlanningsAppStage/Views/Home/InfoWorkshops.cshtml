@@ -29,12 +29,22 @@
         <!-- Soort -->
         <div class="col-md-2">
             <label class="form-label">Soort</label>
-            <select class="form-control"
-                    name="Soort">
-                <option value="">-- kies --</option>
-                <option value="Kamp">Kamp</option>
-                <option value="Event">Event</option>
-            </select>
+            <div class="position-relative">
+                <label class="form-label">Soort</label>
+
+                <!-- Fake select -->
+                <div id="soortSelect" class="form-control" style="cursor:pointer;">
+                    <span id="soortGeselecteerd">-- kies --</span>
+                </div>
+
+                <!-- Dropdown -->
+                <div id="soortDropdown" class="border bg-white d-none position-absolute w-100 mt-1"
+                     style="z-index:1000;">
+                </div>
+
+                <!-- Hidden echte waarde -->
+                <input type="hidden" name="Soort" id="soortValue" />
+            </div>
         </div>
         <!-- Aantal beschikbaar (kort input, volledig label) -->
         <div class="col-md-1">
@@ -124,6 +134,83 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
+
+            
+        // ✅ DUMMY soorten (centrale waarheid)
+            let soorten = [
+                "Event",
+                "Kamp",
+                "Eventworkshop",
+                "NS prikkeling",
+                "NC verdieping",
+                "Scholenworkshop",
+                "Sluiting",
+                "Werking",
+                "Workshop"
+            ];
+
+            const select = document.getElementById("soortSelect");
+            const dropdown = document.getElementById("soortDropdown");
+            const label = document.getElementById("soortGeselecteerd");
+            const hidden = document.getElementById("soortValue");
+
+            function renderDropdown() {
+                dropdown.innerHTML = "";
+
+                soorten.forEach(soort => {
+                    const div = document.createElement("div");
+                    div.className = "soort-item";
+
+                    div.innerHTML = `
+                        <span>${soort}</span>
+                        <span class="soort-remove">✕</span>
+                    `;
+
+                    // selecteren
+                    div.children[0].onclick = () => {
+                        label.textContent = soort;
+                        hidden.value = soort;
+                        dropdown.classList.add("d-none");
+                    };
+
+                    // verwijderen
+                    div.children[1].onclick = (e) => {
+                        e.stopPropagation();
+                        if (confirm(`Soort "${soort}" verwijderen?`)) {
+                            soorten = soorten.filter(s => s !== soort);
+                            if (hidden.value === soort) {
+                                hidden.value = "";
+                                label.textContent = "-- kies --";
+                            }
+                            renderDropdown();
+                        }
+                    };
+
+                    dropdown.appendChild(div);
+                });
+
+                // ➕ toevoegen
+                const add = document.createElement("div");
+                add.className = "soort-add";
+                add.textContent = "+ soort toevoegen";
+                add.onclick = () => {
+                    const nieuw = prompt("Nieuwe soort naam:");
+                    if (nieuw && !soorten.includes(nieuw)) {
+                        soorten.push(nieuw);
+                        renderDropdown();
+                    }
+                };
+
+                dropdown.appendChild(add);
+            }
+
+            select.onclick = () => {
+                dropdown.classList.toggle("d-none");
+            };
+
+            renderDropdown();
+
+
             const aantalDagenInput = document.getElementById("aantalDagenInput");
             const verkorteCheckboxen =
                 document.querySelectorAll(".verkorte-vak input");
@@ -152,6 +239,7 @@
 
             // Initiale state bij laden pagina
             updateVerkorteVakjes();
+
         });
     </script>
 }
