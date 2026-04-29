@@ -36,16 +36,6 @@
                 <option value="Event">Event</option>
             </select>
         </div>
-
-        <!-- Aantal dagen (kort input, volledig label) -->
-        <div class="col-md-1">
-            <label class="form-label">Aantal dagen</label>
-            <input type="number"
-                   class="form-control"
-                   name="AantalDagen"
-                   min="1" />
-        </div>
-
         <!-- Aantal beschikbaar (kort input, volledig label) -->
         <div class="col-md-1">
             <label class="form-label">Aantal beschikbaar</label>
@@ -55,14 +45,37 @@
                    min="0" />
         </div>
 
-        <!-- Verkorte versie -->
-        <div class="col-md-2">
-            <label class="form-label">Verkorte versie mogelijk</label>
-            <input type="text"
+        <!-- Aantal dagen (kort input, volledig label) -->
+        <div class="col-md-1">
+            <label class="form-label">Aantal dagen</label>
+            <input type="number"
                    class="form-control"
-                   name="VerkorteVersie"
-                   placeholder="bv. 1-2" />
+                   name="AantalDagen"
+                   id="aantalDagenInput"
+                   min="1" />
         </div>
+
+        
+
+        <!-- Verkorte versie -->
+        
+        <div class="row-md-3">
+            <label class="form-label d-block">Verkorte versie mogelijk</label>
+
+            <div class="verkorte-container">
+                @for (int i = 1; i <= 10; i++)
+                {
+                    <label class="verkorte-vak">
+                        <input type="checkbox"
+                               name="VerkorteDagen"
+                               value="@i"
+                               data-dag="@i" />
+                        <span>@i</span>
+                    </label>
+                }
+            </div>
+        </div>
+
 
     </div>
 
@@ -70,8 +83,7 @@
         Toevoegen
     </button>
 </form>
-``
-``
+
 
 <hr />
 
@@ -108,3 +120,38 @@
 
     </tbody>
 </table>
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const aantalDagenInput = document.getElementById("aantalDagenInput");
+            const verkorteCheckboxen =
+                document.querySelectorAll(".verkorte-vak input");
+
+            function updateVerkorteVakjes() {
+
+                const aantalDagen = parseInt(aantalDagenInput.value);
+
+                verkorteCheckboxen.forEach(cb => {
+                    const dag = parseInt(cb.dataset.dag);
+                    const wrapper = cb.closest(".verkorte-vak");
+
+                    if (!aantalDagen || dag >= aantalDagen) {
+                        // ❌ mag niet → verbergen + deselecteren
+                        cb.checked = false;
+                        wrapper.style.display = "none";
+                    } else {
+                        // ✅ mag wel → tonen
+                        wrapper.style.display = "inline-flex";
+                    }
+                });
+            }
+
+            // Reageer op wijzigen van aantal dagen
+            aantalDagenInput.addEventListener("input", updateVerkorteVakjes);
+
+            // Initiale state bij laden pagina
+            updateVerkorteVakjes();
+        });
+    </script>
+}

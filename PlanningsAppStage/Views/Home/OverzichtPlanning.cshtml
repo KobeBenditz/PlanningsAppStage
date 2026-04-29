@@ -124,11 +124,13 @@
 <datalist id="workshopLijst">
     @foreach (var w in ViewBag.WorkshopInfos)
     {
+        
         <option value="@w.Titel"
                 data-dagen="@w.AantalDagen"
-                data-verkort="@w.VerkorteVersie"
+                data-verkort='@System.Text.Json.JsonSerializer.Serialize(w.VerkorteDagen)'
                 data-soort="@w.Soort">
         </option>
+
     }
 </datalist>
 
@@ -206,7 +208,6 @@
             if (!optie) return;
 
             const standaardDagen = optie.dataset.dagen;
-            const verkorteVersie = optie.dataset.verkort;
 
             // Dropdown leegmaken
             aantalDagenSelect.innerHTML = "";
@@ -214,10 +215,16 @@
             // Standaard aantal dagen toevoegen
             voegAantalToe(standaardDagen);
 
-            // Verkorte versie bv "1-2-3"
-            if (verkorteVersie) {
-                verkorteVersie.split("-").forEach(v => voegAantalToe(v));
+            
+            const verkorteJson = optie.dataset.verkort;
+
+            // Verkorte dagen uit checkbox-opslag (bv [1,3,5])
+            if (verkorteJson) {
+                const verkorteDagen = JSON.parse(verkorteJson);
+
+                verkorteDagen.forEach(v => voegAantalToe(v));
             }
+
 
             // Standaardwaarde selecteren
             aantalDagenSelect.value = standaardDagen;

@@ -113,3 +113,42 @@ body {
 .nav-button.active::after {
   width: 100%;
 }
+
+/* ============================= */
+/* VERKORTE VERSIE VAKJES (1-10) */
+/* ============================= */
+
+.verkorte-container {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.verkorte-vak input {
+    display: none; /* echte checkbox verbergen */
+}
+
+.verkorte-vak span {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 600;
+    transition: all 0.15s ease-in-out;
+}
+
+    .verkorte-vak span:hover {
+        border-color: #258cfb;
+    }
+
+.verkorte-vak input:checked + span {
+    background-color: #258cfb;
+    border-color: #258cfb;
+    color: white;
+}

@@ -44,7 +44,7 @@ namespace PlanningsAppStage.Controllers
                 Soort = "Kamp",
                 AantalDagen = 3,
                 AantalBeschikbaar = 4,
-                VerkorteVersie = "1-2"
+                VerkorteDagen  = [1,2]
             },
             new WorkshopInfo
             {
@@ -52,7 +52,7 @@ namespace PlanningsAppStage.Controllers
                 Soort = "Event",
                 AantalDagen = 5,
                 AantalBeschikbaar = 2,
-                VerkorteVersie = "1"
+                VerkorteDagen  = [1]
             }
         };
 

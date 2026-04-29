@@ -7,7 +7,7 @@
         public int AantalBeschikbaar { get; set; }
 
         // Extra info
-        public string VerkorteVersie { get; set; }
+        public List<int> VerkorteDagen { get; set; } = new();
 
         // NIEUW: soort workshop
         // voorlopig: "Kamp" of "Event"
