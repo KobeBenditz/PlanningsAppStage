@@ -59,12 +59,26 @@
 <hr />
 
 <h2>Overzicht locaties</h2>
-
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>Naam</th>
-            <th>Adres</th>
+            
+            <th>
+                Naam
+                <span class="th-buttons">
+                    <button class="sort-btn" title="Sorteren">▲</button>
+                    <button class="filter-btn" title="Filteren">🔍</button>
+                </span>
+            </th>
+            <th>
+                Adres
+                <span class="th-buttons">
+                    <button class="sort-btn" title="Sorteren">▲</button>
+                    <button class="filter-btn" title="Filteren">🔍</button>
+                </span>
+            </th>
+
+            <th style="width:40px;"></th> @* actie-kolom *@
         </tr>
     </thead>
     <tbody>
@@ -73,93 +87,158 @@
             <tr>
                 <td>@locatie.Naam</td>
                 <td>@locatie.Adres</td>
+                <td class="text-center">
+                    <button type="button"
+                            class="btn btn-sm btn-outline-secondary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#locatieModal"
+                            data-naam="@locatie.Naam"
+                            data-adres="@locatie.Adres"
+                            data-soorten='@Html.Raw(
+                                                                    System.Text.Json.JsonSerializer.Serialize(locatie.Soorten)
+                                                                )'>
+                        ℹ
+                    </button>
+                </td>
             </tr>
         }
     </tbody>
 </table>
 
+<div class="modal fade" id="locatieModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="locatieModalTitel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <p id="locatieAdres"></p>
+
+                <h6>Soorten & uren</h6>
+                <ul id="locatieSoorten"></ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 @section Scripts {
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-            const aantalInput = document.getElementById("aantalSoorten");
-            const container = document.getElementById("soortenContainer");
+    // =====================================
+    // 1️⃣ MODAL: locatie‑info vullen
+    // =====================================
+    const modal = document.getElementById("locatieModal");
 
-            if (!aantalInput || !container) {
-                console.error("InfoLocaties: aantalSoorten of soortenContainer niet gevonden");
-                return;
-            }
+    if (modal) {
+        modal.addEventListener("show.bs.modal", function (event) {
 
-            function renderSoorten() {
-                container.innerHTML = "";
-                const aantal = parseInt(aantalInput.value);
+            const button = event.relatedTarget;
+            if (!button) return;
 
-                for (let i = 0; i < aantal; i++) {
+            const naam = button.dataset.naam;
+            const adres = button.dataset.adres;
+            const soorten = JSON.parse(button.dataset.soorten || "[]");
 
-                    const row = document.createElement("div");
-                    row.className = "row mb-3";
+            document.getElementById("locatieModalTitel").textContent = naam;
+            document.getElementById("locatieAdres").textContent = adres;
 
-                    row.innerHTML = `
-                        <div class="col-md-3">
-                            <div class="position-relative soort-wrapper">
-                                <label class="form-label">Soort</label>
+            const lijst = document.getElementById("locatieSoorten");
+            lijst.innerHTML = "";
 
-                                <div class="form-control soortSelect" style="cursor:pointer;">
-                                    <span class="soortGeselecteerd">-- kies --</span>
+            soorten.forEach(s => {
+                const li = document.createElement("li");
+                li.textContent = `${s.Soort}: ${s.StartUur} – ${s.EindUur}`;
+                lijst.appendChild(li);
+            });
+        });
+    }
+
+    // =====================================
+    // 2️⃣ FORMULIER: soorten dynamisch renderen
+    // =====================================
+    const aantalInput = document.getElementById("aantalSoorten");
+    const container = document.getElementById("soortenContainer");
+
+    if (!aantalInput || !container) {
+        console.error("InfoLocaties: aantalSoorten of soortenContainer niet gevonden");
+        return;
+    }
+
+    function renderSoorten() {
+        container.innerHTML = "";
+        const aantal = parseInt(aantalInput.value);
+
+        for (let i = 0; i < aantal; i++) {
+
+            const row = document.createElement("div");
+            row.className = "row mb-3";
+
+            row.innerHTML = `
+                <div class="col-md-3">
+                    <div class="position-relative soort-wrapper">
+                        <label class="form-label">Soort</label>
+
+                        <div class="form-control soortSelect" style="cursor:pointer;">
+                            <span class="soortGeselecteerd">-- kies --</span>
+                        </div>
+
+                        <div class="border bg-white d-none position-absolute w-100 mt-1 soortDropdown"
+                             style="z-index:1000;">
+                            @foreach (string soort in ViewBag.Soorten)
+                            {
+                                <div class="soort-optie d-flex justify-content-between align-items-center"
+                                     data-value="@soort">
+                                    <span>@soort</span>
+                                    <button type="button"
+                                            class="btn btn-sm btn-link text-danger verwijder-soort"
+                                            data-naam="@soort">✕</button>
                                 </div>
+                            }
 
-                                <div class="border bg-white d-none position-absolute w-100 mt-1 soortDropdown"
-                                     style="z-index:1000;">
-                                    @foreach (string soort in ViewBag.Soorten)
-                                    {
-                                            <div class="soort-optie d-flex justify-content-between align-items-center"
-                 data-value="@soort">
-                                                    <span>@soort</span>
-                                                    <button type="button"
-                        class="btn btn-sm btn-link text-danger verwijder-soort"
-                        data-naam="@soort">✕</button>
-                                            </div>
-                                    }
-
-                                    <div class="border-top mt-1 pt-1 text-center">
-                                        <button type="button"
-                                                class="btn btn-sm btn-outline-success voeg-soort-toe">
-                                            + soort toevoegen
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <input type="hidden"
-                                       name="Soorten[${i}].Soort"
-                                       class="soortValue" />
+                            <div class="border-top mt-1 pt-1 text-center">
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-success voeg-soort-toe">
+                                    + soort toevoegen
+                                </button>
                             </div>
                         </div>
 
-                        <div class="col-md-2">
-                            <label class="form-label">Startuur</label>
-                            <input type="time"
-                                   class="form-control"
-                                   name="Soorten[${i}].StartUur" />
-                        </div>
+                        <input type="hidden"
+                               name="Soorten[${i}].Soort"
+                               class="soortValue" />
+                    </div>
+                </div>
 
-                        <div class="col-md-2">
-                            <label class="form-label">Einduur</label>
-                            <input type="time"
-                                   class="form-control"
-                                   name="Soorten[${i}].EindUur" />
-                        </div>
-                    `;
+                <div class="col-md-2">
+                    <label class="form-label">Startuur</label>
+                    <input type="time"
+                           class="form-control"
+                           name="Soorten[${i}].StartUur" />
+                </div>
 
-                    container.appendChild(row);
-                }
-            }
+                <div class="col-md-2">
+                    <label class="form-label">Einduur</label>
+                    <input type="time"
+                           class="form-control"
+                           name="Soorten[${i}].EindUur" />
+                </div>
+            `;
 
-            // 🔁 hertekenen bij wijziging
-            aantalInput.addEventListener("change", renderSoorten);
+            container.appendChild(row);
+        }
+    }
 
-            // ✅ INITIEEL OPBOUWEN
-            renderSoorten();
+    // 🔁 hertekenen bij wijziging
+    aantalInput.addEventListener("change", renderSoorten);
 
-        });
-    </script>
+    // ✅ initieel renderen
+    renderSoorten();
+
+});
+</script>
 }

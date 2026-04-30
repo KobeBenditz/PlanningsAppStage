@@ -1,17 +1,12 @@
 @model List<PlanningsAppStage.Models.WorkshopInfo>
 
 @{
-    // Titel van de pagina
     ViewData["Title"] = "Info workshops";
 }
 
 <!-- ========================================= -->
 <!-- BOVENSTE DEEL: WORKSHOP TOEVOEGEN -->
 <!-- ========================================= -->
-<!--
-    Dit formulier is voorlopig alleen visueel.
-    Alle velden zijn invulbaar, maar doen nog niets.
--->
 
 <h2>Workshop toevoegen</h2>
 
@@ -21,9 +16,7 @@
         <!-- Titel -->
         <div class="col-md-4">
             <label class="form-label">Titel</label>
-            <input type="text"
-                   class="form-control"
-                   name="Titel" />
+            <input type="text" class="form-control" name="Titel" />
         </div>
 
         <!-- Soort -->
@@ -31,13 +24,10 @@
             <label class="form-label">Soort</label>
 
             <div class="position-relative soort-wrapper">
-
-                <!-- Fake select -->
                 <div class="form-control soortSelect" style="cursor:pointer;">
                     <span class="soortGeselecteerd">-- kies --</span>
                 </div>
 
-                <!-- Dropdown -->
                 <div class="border bg-white d-none position-absolute w-100 mt-1 soortDropdown"
                      style="z-index:1000;">
                     @foreach (string soort in ViewBag.Soorten)
@@ -61,21 +51,17 @@
                     </div>
                 </div>
 
-                <!-- Hidden waarde -->
                 <input type="hidden" name="Soort" class="soortValue" />
             </div>
-
         </div>
-        <!-- Aantal beschikbaar (kort input, volledig label) -->
+
+        <!-- Aantal beschikbaar -->
         <div class="col-md-1">
             <label class="form-label">Aantal beschikbaar</label>
-            <input type="number"
-                   class="form-control"
-                   name="AantalBeschikbaar"
-                   min="0" />
+            <input type="number" class="form-control" name="AantalBeschikbaar" min="0" />
         </div>
 
-        <!-- Aantal dagen (kort input, volledig label) -->
+        <!-- Aantal dagen -->
         <div class="col-md-1">
             <label class="form-label">Aantal dagen</label>
             <input type="number"
@@ -85,10 +71,7 @@
                    min="1" />
         </div>
 
-        
-
         <!-- Verkorte versie -->
-        
         <div class="row-md-3">
             <label class="form-label d-block">Verkorte versie mogelijk</label>
 
@@ -106,14 +89,10 @@
             </div>
         </div>
 
-
     </div>
 
-    <button type="submit" class="btn btn-success">
-        Toevoegen
-    </button>
+    <button type="submit" class="btn btn-success">Toevoegen</button>
 </form>
-
 
 <hr />
 
@@ -126,42 +105,38 @@
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th data-column="Titel">
+            <th>
                 Titel
                 <span class="th-buttons">
-                    <button class="sort-btn" title="Sorteren">▲</button>
-                    <button class="filter-btn" title="Filteren">🔍</button>
+                    <button class="sort-btn">▲</button>
+                    <button class="filter-btn">🔍</button>
                 </span>
             </th>
-            <th data-column="Soort">
+            <th>
                 Soort
                 <span class="th-buttons">
-                    <button class="sort-btn" title="Sorteren">▲</button>
-                    <button class="filter-btn" title="Filteren">🔍</button>
+                    <button class="sort-btn">▲</button>
+                    <button class="filter-btn">🔍</button>
                 </span>
             </th>
-            <th data-column="Aantal dagen">
+            <th>
                 Aantal dagen
                 <span class="th-buttons">
-                    <button class="sort-btn" title="Sorteren">▲</button>
-                    <button class="filter-btn" title="Filteren">🔍</button>
+                    <button class="sort-btn">▲</button>
+                    <button class="filter-btn">🔍</button>
                 </span>
             </th>
-            <th data-column="Aantal beschikbaar">
+            <th>
                 Aantal beschikbaar
                 <span class="th-buttons">
-                    <button class="sort-btn" title="Sorteren">▲</button>
-                    <button class="filter-btn" title="Filteren">🔍</button>
+                    <button class="sort-btn">▲</button>
+                    <button class="filter-btn">🔍</button>
                 </span>
             </th>
+            <th style="width:40px;"></th>
         </tr>
     </thead>
     <tbody>
-
-        @*
-            We lopen door alle workshops uit de controller
-            Elke workshop wordt één rij in de tabel
-        *@
         @foreach (var workshop in Model)
         {
             <tr>
@@ -169,18 +144,60 @@
                 <td>@workshop.Soort</td>
                 <td>@workshop.AantalDagen</td>
                 <td>@workshop.AantalBeschikbaar</td>
+                <td class="text-center">
+                    <button type="button"
+                            class="btn btn-sm btn-outline-secondary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#infoWorkshopModal"
+                            data-titel="@workshop.Titel"
+                            data-soort="@workshop.Soort"
+                            data-dagen="@workshop.AantalDagen"
+                            data-beschikbaar="@workshop.AantalBeschikbaar"
+                            data-verkort='@System.Text.Json.JsonSerializer.Serialize(workshop.VerkorteDagen)'>
+                        ℹ
+                    </button>
+                </td>
             </tr>
         }
-
     </tbody>
 </table>
+
+<!-- ========================================= -->
+<!-- MODAL: INFO WORKSHOP -->
+<!-- ========================================= -->
+
+<div class="modal fade" id="infoWorkshopModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="iwTitel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <p><strong>Soort:</strong> <span id="iwSoort"></span></p>
+                <p><strong>Aantal dagen:</strong> <span id="iwDagen"></span></p>
+                <p><strong>Aantal beschikbaar:</strong> <span id="iwBeschikbaar"></span></p>
+                <p>
+                    <strong>Verkorte versies:</strong>
+                    <span id="iwVerkort"></span>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
+            // =============================
+            // Verkorte dagen (formulier)
+            // =============================
             const aantalDagenInput = document.getElementById("aantalDagenInput");
-            const verkorteCheckboxen =
-                document.querySelectorAll(".verkorte-vak input");
+            const verkorteCheckboxen = document.querySelectorAll(".verkorte-vak input");
 
             function updateVerkorteVakjes() {
                 if (!aantalDagenInput) return;
@@ -204,6 +221,44 @@
                 aantalDagenInput.addEventListener("input", updateVerkorteVakjes);
                 updateVerkorteVakjes();
             }
+
+            // =============================
+            // Modal info vullen
+            // =============================
+            const modal = document.getElementById("infoWorkshopModal");
+
+            modal.addEventListener("show.bs.modal", function (event) {
+                const button = event.relatedTarget;
+
+                document.getElementById("iwTitel").textContent = button.dataset.titel;
+                document.getElementById("iwSoort").textContent = button.dataset.soort;
+                document.getElementById("iwDagen").textContent = button.dataset.dagen;
+                document.getElementById("iwBeschikbaar").textContent = button.dataset.beschikbaar;
+
+                const verkorte = JSON.parse(button.dataset.verkort || "[]");
+                const tekst = document.getElementById("iwVerkort");
+                tekst.textContent = "";
+
+                if (verkorte.length === 0) {
+                    tekst.textContent = "Geen";
+                    return;
+                }
+
+                verkorte.sort((a, b) => a - b);
+
+                const lijstTekst =
+                    verkorte.length === 1
+                        ? verkorte[0]
+                        : verkorte.slice(0, -1).join(", ") + " en " + verkorte.at(-1);
+
+                // ✅ “dag” alleen als het getal echt 1 is
+                const suffix =
+                    (verkorte.length === 1 && verkorte[0] === 1)
+                        ? "dag"
+                        : "dagen";
+
+                tekst.textContent = `${lijstTekst} ${suffix}`;
+            });
 
         });
     </script>
