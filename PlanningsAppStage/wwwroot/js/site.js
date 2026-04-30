@@ -25,8 +25,12 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.innerText = asc ? "▼" : "▲";
 
             rows.sort((a, b) => {
-                let A = a.cells[columnIndex].innerText.trim();
-                let B = b.cells[columnIndex].innerText.trim();
+                let cellA = a.cells[columnIndex];
+                let cellB = b.cells[columnIndex];
+
+                // ✅ eerst proberen via data-date (voor datums)
+                let A = cellA.dataset.date ?? cellA.innerText.trim();
+                let B = cellB.dataset.date ?? cellB.innerText.trim();
 
                 if (!isNaN(Date.parse(A)) && !isNaN(Date.parse(B))) {
                     return asc
@@ -34,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         : new Date(B) - new Date(A);
                 }
 
+                // fallback = alfabetisch / numeriek
                 return asc
                     ? A.localeCompare(B, "nl", { numeric: true })
                     : B.localeCompare(A, "nl", { numeric: true });

@@ -204,8 +204,10 @@
         @foreach (var workshop in Model)
         {
             <tr>
-                <td>@workshop.WorkshopCode</td>
-                <td>@workshop.Datum.ToString("dd/MM/yyyy")</td>
+                <td>@workshop.WorkshopCode</td>                
+                <td data-date="@workshop.Datum.ToString("yyyy-MM-dd")">
+                    @workshop.Datum.ToString("dd/MM/yyyy")
+                </td>
                 <td>@workshop.Uren</td>
                 <td>@workshop.Locatie</td>
                 <td>@workshop.Titel</td>
