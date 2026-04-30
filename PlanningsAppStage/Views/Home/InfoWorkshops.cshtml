@@ -29,22 +29,42 @@
         <!-- Soort -->
         <div class="col-md-2">
             <label class="form-label">Soort</label>
-            <div class="position-relative">
-                <label class="form-label">Soort</label>
+
+            <div class="position-relative soort-wrapper">
 
                 <!-- Fake select -->
-                <div id="soortSelect" class="form-control" style="cursor:pointer;">
-                    <span id="soortGeselecteerd">-- kies --</span>
+                <div class="form-control soortSelect" style="cursor:pointer;">
+                    <span class="soortGeselecteerd">-- kies --</span>
                 </div>
 
                 <!-- Dropdown -->
-                <div id="soortDropdown" class="border bg-white d-none position-absolute w-100 mt-1"
+                <div class="border bg-white d-none position-absolute w-100 mt-1 soortDropdown"
                      style="z-index:1000;">
+                    @foreach (string soort in ViewBag.Soorten)
+                    {
+                        <div class="soort-optie d-flex justify-content-between align-items-center"
+                             data-value="@soort">
+                            <span>@soort</span>
+                            <button type="button"
+                                    class="btn btn-sm btn-link text-danger verwijder-soort"
+                                    data-naam="@soort">
+                                ✕
+                            </button>
+                        </div>
+                    }
+
+                    <div class="border-top mt-1 pt-1 text-center">
+                        <button type="button"
+                                class="btn btn-sm btn-outline-success voeg-soort-toe">
+                            + soort toevoegen
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Hidden echte waarde -->
-                <input type="hidden" name="Soort" id="soortValue" />
+                <!-- Hidden waarde -->
+                <input type="hidden" name="Soort" class="soortValue" />
             </div>
+
         </div>
         <!-- Aantal beschikbaar (kort input, volledig label) -->
         <div class="col-md-1">
@@ -158,88 +178,12 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
-
-            
-        // ✅ DUMMY soorten (centrale waarheid)
-            let soorten = [
-                "Event",
-                "Kamp",
-                "Eventworkshop",
-                "NS prikkeling",
-                "NC verdieping",
-                "Scholenworkshop",
-                "Sluiting",
-                "Werking",
-                "Workshop"
-            ];
-
-            const select = document.getElementById("soortSelect");
-            const dropdown = document.getElementById("soortDropdown");
-            const label = document.getElementById("soortGeselecteerd");
-            const hidden = document.getElementById("soortValue");
-
-            function renderDropdown() {
-                dropdown.innerHTML = "";
-
-                soorten.forEach(soort => {
-                    const div = document.createElement("div");
-                    div.className = "soort-item";
-
-                    div.innerHTML = `
-                        <span>${soort}</span>
-                        <span class="soort-remove">✕</span>
-                    `;
-
-                    // selecteren
-                    div.children[0].onclick = () => {
-                        label.textContent = soort;
-                        hidden.value = soort;
-                        dropdown.classList.add("d-none");
-                    };
-
-                    // verwijderen
-                    div.children[1].onclick = (e) => {
-                        e.stopPropagation();
-                        if (confirm(`Soort "${soort}" verwijderen?`)) {
-                            soorten = soorten.filter(s => s !== soort);
-                            if (hidden.value === soort) {
-                                hidden.value = "";
-                                label.textContent = "-- kies --";
-                            }
-                            renderDropdown();
-                        }
-                    };
-
-                    dropdown.appendChild(div);
-                });
-
-                // ➕ toevoegen
-                const add = document.createElement("div");
-                add.className = "soort-add";
-                add.textContent = "+ soort toevoegen";
-                add.onclick = () => {
-                    const nieuw = prompt("Nieuwe soort naam:");
-                    if (nieuw && !soorten.includes(nieuw)) {
-                        soorten.push(nieuw);
-                        renderDropdown();
-                    }
-                };
-
-                dropdown.appendChild(add);
-            }
-
-            select.onclick = () => {
-                dropdown.classList.toggle("d-none");
-            };
-
-            renderDropdown();
-
-
             const aantalDagenInput = document.getElementById("aantalDagenInput");
             const verkorteCheckboxen =
                 document.querySelectorAll(".verkorte-vak input");
 
             function updateVerkorteVakjes() {
+                if (!aantalDagenInput) return;
 
                 const aantalDagen = parseInt(aantalDagenInput.value);
 
@@ -248,21 +192,18 @@
                     const wrapper = cb.closest(".verkorte-vak");
 
                     if (!aantalDagen || dag >= aantalDagen) {
-                        // ❌ mag niet → verbergen + deselecteren
                         cb.checked = false;
                         wrapper.style.display = "none";
                     } else {
-                        // ✅ mag wel → tonen
                         wrapper.style.display = "inline-flex";
                     }
                 });
             }
 
-            // Reageer op wijzigen van aantal dagen
-            aantalDagenInput.addEventListener("input", updateVerkorteVakjes);
-
-            // Initiale state bij laden pagina
-            updateVerkorteVakjes();
+            if (aantalDagenInput) {
+                aantalDagenInput.addEventListener("input", updateVerkorteVakjes);
+                updateVerkorteVakjes();
+            }
 
         });
     </script>

@@ -1,71 +1,42 @@
 @model List<PlanningsAppStage.Models.Locatie>
 
 @{
-    // Titel van de pagina
     ViewData["Title"] = "Info locaties";
 }
 
-
-<!-- ========================================= -->
-<!-- BOVENSTE DEEL: LOCATIE TOEVOEGEN -->
-<!-- ========================================= -->
-<!--
-    Dit formulier volgt de afbeelding:
-    - meer invulvelden dan kolommen
-    - invulbaar, maar doet voorlopig niets
--->
-
 <h2>Locatie toevoegen</h2>
-
-
 
 <form method="post">
 
-    <!-- ========================= -->
     <!-- BASISGEGEVENS LOCATIE -->
-    <!-- ========================= -->
     <div class="row mb-3">
-
         <div class="col-md-3">
             <label class="form-label">Naam</label>
-            <input type="text"
-                   class="form-control"
-                   name="Naam" />
+            <input type="text" class="form-control" name="Naam" />
         </div>
 
         <div class="col-md-3">
             <label class="form-label">Straat</label>
-            <input type="text"
-                   class="form-control"
-                   name="Straat" />
+            <input type="text" class="form-control" name="Straat" />
         </div>
 
         <div class="col-md-1">
             <label class="form-label">Nr</label>
-            <input type="text"
-                   class="form-control"
-                   name="Nummer" />
+            <input type="text" class="form-control" name="Nummer" />
         </div>
 
         <div class="col-md-2">
             <label class="form-label">Gemeente</label>
-            <input type="text"
-                   class="form-control"
-                   name="Gemeente" />
+            <input type="text" class="form-control" name="Gemeente" />
         </div>
 
         <div class="col-md-1">
             <label class="form-label">Postcode</label>
-            <input type="text"
-                   class="form-control"
-                   name="Postcode" />
+            <input type="text" class="form-control" name="Postcode" />
         </div>
-
     </div>
 
-    <!-- ========================= -->
     <!-- AANTAL SOORTEN -->
-    <!-- ========================= -->
     <div class="row mb-3">
         <div class="col-md-2">
             <label class="form-label">Aantal soorten</label>
@@ -77,53 +48,26 @@
         </div>
     </div>
 
-    <!-- ========================= -->
     <!-- DYNAMISCHE SOORTEN -->
-    <!-- ========================= -->
     <div id="soortenContainer"></div>
 
     <button type="submit" class="btn btn-primary mt-3">
         Toevoegen
     </button>
-
 </form>
 
-
-
-
 <hr />
-
-<!-- ========================================= -->
-<!-- TABEL: OVERZICHT LOCATIES -->
-<!-- ========================================= -->
 
 <h2>Overzicht locaties</h2>
 
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th data-column="Naam">
-                Naam
-                <span class="th-buttons">
-                    <button class="sort-btn" title="Sorteren">▲</button>
-                    <button class="filter-btn" title="Filteren">🔍</button>
-                </span>
-            </th>
-            <th data-column="Adres">
-                Adres
-                <span class="th-buttons">
-                    <button class="sort-btn" title="Sorteren">▲</button>
-                    <button class="filter-btn" title="Filteren">🔍</button>
-                </span>
-            </th>
+            <th>Naam</th>
+            <th>Adres</th>
         </tr>
     </thead>
     <tbody>
-
-        @*
-            We overlopen de lijst van locaties
-            Elke locatie wordt één rij in de tabel
-        *@
         @foreach (var locatie in Model)
         {
             <tr>
@@ -131,60 +75,91 @@
                 <td>@locatie.Adres</td>
             </tr>
         }
-
     </tbody>
 </table>
+
 @section Scripts {
     <script>
-        const aantalInput = document.getElementById("aantalSoorten");
-        const container = document.getElementById("soortenContainer");
+        document.addEventListener("DOMContentLoaded", function () {
 
-        function renderSoorten() {
+            const aantalInput = document.getElementById("aantalSoorten");
+            const container = document.getElementById("soortenContainer");
 
-            // Alles leegmaken bij elke wijziging
-            container.innerHTML = "";
-
-            const aantal = parseInt(aantalInput.value);
-
-            // Voor elk gekozen aantal bouwen we een rij
-            for (let i = 0; i < aantal; i++) {
-
-                const row = document.createElement("div");
-                row.className = "row mb-3";
-
-                row.innerHTML = `
-                    <div class="col-md-2">
-                        <label class="form-label">Soort</label>
-                        <select class="form-control" name="Soorten[${i}].Soort">
-                            <option value="Kamp">Kamp</option>
-                            <option value="Event">Event</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-2">
-                        <label class="form-label">Startuur</label>
-                        <input type="time"
-                               class="form-control"
-                               name="Soorten[${i}].StartUur" />
-                    </div>
-
-                    <div class="col-md-2">
-                        <label class="form-label">Einduur</label>
-                        <input type="time"
-                               class="form-control"
-                               name="Soorten[${i}].EindUur" />
-                    </div>
-                `;
-
-                container.appendChild(row);
+            if (!aantalInput || !container) {
+                console.error("InfoLocaties: aantalSoorten of soortenContainer niet gevonden");
+                return;
             }
-        }
 
-        // Hertekenen bij aanpassen van aantal
-        aantalInput.addEventListener("change", renderSoorten);
+            function renderSoorten() {
+                container.innerHTML = "";
+                const aantal = parseInt(aantalInput.value);
 
-        // Bij het laden van de pagina
-        renderSoorten();
+                for (let i = 0; i < aantal; i++) {
+
+                    const row = document.createElement("div");
+                    row.className = "row mb-3";
+
+                    row.innerHTML = `
+                        <div class="col-md-3">
+                            <div class="position-relative soort-wrapper">
+                                <label class="form-label">Soort</label>
+
+                                <div class="form-control soortSelect" style="cursor:pointer;">
+                                    <span class="soortGeselecteerd">-- kies --</span>
+                                </div>
+
+                                <div class="border bg-white d-none position-absolute w-100 mt-1 soortDropdown"
+                                     style="z-index:1000;">
+                                    @foreach (string soort in ViewBag.Soorten)
+                                    {
+                                            <div class="soort-optie d-flex justify-content-between align-items-center"
+                 data-value="@soort">
+                                                    <span>@soort</span>
+                                                    <button type="button"
+                        class="btn btn-sm btn-link text-danger verwijder-soort"
+                        data-naam="@soort">✕</button>
+                                            </div>
+                                    }
+
+                                    <div class="border-top mt-1 pt-1 text-center">
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-success voeg-soort-toe">
+                                            + soort toevoegen
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <input type="hidden"
+                                       name="Soorten[${i}].Soort"
+                                       class="soortValue" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label">Startuur</label>
+                            <input type="time"
+                                   class="form-control"
+                                   name="Soorten[${i}].StartUur" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label">Einduur</label>
+                            <input type="time"
+                                   class="form-control"
+                                   name="Soorten[${i}].EindUur" />
+                        </div>
+                    `;
+
+                    container.appendChild(row);
+                }
+            }
+
+            // 🔁 hertekenen bij wijziging
+            aantalInput.addEventListener("change", renderSoorten);
+
+            // ✅ INITIEEL OPBOUWEN
+            renderSoorten();
+
+        });
     </script>
 }
-

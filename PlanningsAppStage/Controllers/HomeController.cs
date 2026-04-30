@@ -8,6 +8,60 @@ namespace PlanningsAppStage.Controllers
     public class HomeController : Controller
     {
         // ===============================
+        // CENTRALE SOORTENLIJST (UI-configuratie)
+        // Wordt gebruikt voor dropdowns
+        // Mag wijzigen zonder bestaande data te breken
+        // ===============================
+        private static List<string> _soorten = new()
+        {
+            "Event",
+            "Kamp",
+            "Eventworkshop",
+            "NS prikkeling",
+            "NC verdieping",
+            "Scholenworkshop",
+            "Sluiting",
+            "Werking",
+            "Workshop"
+        };
+        // ===============================
+        // INFO SOORTEN - GET
+        // ===============================
+        [HttpGet]
+        public IActionResult InfoSoorten()
+        {
+            return View(_soorten);
+        }
+
+
+        // ===============================
+        // SOORT TOEVOEGEN
+        // ===============================
+        [HttpPost]
+        public IActionResult VoegSoortToe(string naam)
+        {
+            if (!string.IsNullOrWhiteSpace(naam) && !_soorten.Contains(naam))
+            {
+                _soorten.Add(naam);
+            }
+
+            // terug naar vorige pagina
+            return Redirect(Request.Headers["Referer"].ToString());
+        }
+
+        // ===============================
+        // SOORT VERWIJDEREN
+        // ===============================
+        [HttpPost]
+        public IActionResult VerwijderSoort(string naam)
+        {
+            _soorten.Remove(naam);
+
+            return Redirect(Request.Headers["Referer"].ToString());
+        }
+
+
+        // ===============================
         // TIJDELIJKE DATA (zonder databank)
         // Deze lijst blijft bestaan zolang de app draait
         // ===============================
@@ -223,6 +277,7 @@ namespace PlanningsAppStage.Controllers
         [HttpGet]
         public IActionResult InfoWorkshops()
         {
+            ViewBag.Soorten = _soorten;
             return View(_workshopInfos);
         }
 
@@ -250,6 +305,7 @@ namespace PlanningsAppStage.Controllers
         [HttpGet]
         public IActionResult InfoLocaties()
         {
+            ViewBag.Soorten = _soorten;
             return View(_locaties);
         }
 

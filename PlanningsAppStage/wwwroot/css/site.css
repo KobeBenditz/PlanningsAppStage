@@ -239,5 +239,35 @@ th:hover .th-buttons button {
     border-color: #666;
     background-color: #e0e0e0;
 }
+/* ===============================
+   Fake dropdown - soort
+   =============================== */
 
-``
+.soort-wrapper {
+    position: relative;
+}
+
+/* Dropdown items */
+.soort-optie {
+    padding: 6px 10px;
+    cursor: pointer;
+    user-select: none;
+}
+
+    .soort-optie:hover {
+        background-color: #f0f0f0;
+    }
+
+    /* Verwijder-knop (✕) */
+    .soort-optie .verwijder-soort {
+        font-size: 14px;
+        line-height: 1;
+        padding: 0 4px;
+        text-decoration: none;
+    }
+
+/* Zorg dat dropdown boven alles staat */
+.soortDropdown {
+    max-height: 220px;
+    overflow-y: auto;
+}
